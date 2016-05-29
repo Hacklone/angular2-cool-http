@@ -22,7 +22,7 @@ bootstrap(MyApp, [
 ```
 
 ## Features
-### Api calls
+### Async Api calls
 - getAsync(url, options)
 - postAsync(url, data, options)
 - putAsync(url, data, options)
@@ -46,9 +46,16 @@ export class AppComponent implements OnInit {
     }
     
     async ngOnInit() {
+        // await async api call
         let response = await this.coolHttp.getAsync('/api/request');
         
         console.log(response);
+        
+        // or simply chain Promise
+        this.coolHttp.getAsync('/api/request')
+            .then(response => {
+                console.log(response);
+            });
     }
 }
 ```
