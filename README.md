@@ -60,6 +60,14 @@ export class AppComponent implements OnInit {
 }
 ```
 
+### Observable api calls
+- getObservable(url, options)
+- postObservable(url, data, options)
+- putObservable(url, data, options)
+- deleteObservable(url, options)
+- patchObservable(url, data, options)
+- headObservable(url, options)
+
 ### Global headers
 CoolHttp's api calls will always send these globally registered headers. (Great for authentication)
 
@@ -71,6 +79,7 @@ coolHttp.registerGlobalHeader(new HttpHeader('MyHttpHeader', 'MyHeadersValue'));
 
 ### Request Interceptors
 CoolHttp's api calls will invoke the registered request interceptors before sending the request
+- only works with async api calls at the moment
 
 ```javascript
 coolHttp.registerRequestInterceptor({
