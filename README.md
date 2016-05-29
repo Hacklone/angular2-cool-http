@@ -1,4 +1,9 @@
-# angular2-cool-http
+[npm-url]: https://npmjs.org/package/angular2-cool-http
+[npm-image]: https://img.shields.io/npm/v/angular2-cool-http.svg
+[downloads-image]: https://img.shields.io/npm/dm/angular2-cool-http.svg
+[total-downloads-image]: https://img.shields.io/npm/dt/angular2-cool-http.svg
+
+# angular2-cool-http [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]  [![Total Downloads][total-downloads-image]][npm-url]
 Cool features over angular2 HttpClient
 
 ## Install 
