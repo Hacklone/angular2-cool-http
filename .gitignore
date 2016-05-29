@@ -1,0 +1,8 @@
+/dist
+/tmp
+
+/node_modules
+/typings
+
+/.vscode
+/.idea

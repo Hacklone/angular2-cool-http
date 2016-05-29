@@ -1,0 +1,43 @@
+{
+  "name": "angular2-cool-http",
+  "version": "1.0.0",
+  "description": "Cool features over angular2 Http Client.",
+  "main": "index.js",
+  "jsnext:main": "esm/index.js",
+  "typings": "index.d.ts",
+  "peerDependencies": {
+    "rxjs": ">= 5.0.0-beta.6",
+    "@angular/core": ">= 2.0.0-rc.1",
+    "@angular/http": ">= 2.0.0-rc.1"
+  },
+  "scripts": {
+    "build": "rm -rf ./dist && tsc && cp ./README.md ./dist/README.md && cp ./package.json ./dist/package.json"  
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hacklone/angular2-cool-http.git"
+  },
+  "keywords": [
+    "angular2",
+    "http",
+    "httpclient",
+    "interceptor",
+    "global",
+    "headers",
+    "interceptors",
+    "cool",
+    "cool-http"
+  ],
+  "author": "Hacklone <toakak@gmail.com>",
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/Hacklone/angular2-cool-http/raw/master/LICENSE"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/Hacklone/angular2-cool-http/issues"
+  },
+  "homepage": "https://github.com/Hacklone/angular2-cool-http#readme"
+}
