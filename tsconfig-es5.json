@@ -5,7 +5,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "mapRoot": "",
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": true,
     "noImplicitAny": false,
@@ -18,5 +18,8 @@
 
   "files": [
     "index.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

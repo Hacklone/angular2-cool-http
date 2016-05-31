@@ -1,0 +1,22 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "mapRoot": "",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "noImplicitAny": false,
+    "outDir": "dist/esm",
+    "rootDir": ".",
+    "sourceMap": true,
+    "target": "es2015",
+    "inlineSources": true
+  },
+
+  "files": [
+    "index.ts"
+  ]
+}

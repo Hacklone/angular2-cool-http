@@ -33,7 +33,7 @@ export class CoolHttp {
         this._responseInterceptors.push(responseInterceptor);
     }
 
-    public async getAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<Response> {
+    public async getAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
         let that = this;
 
         return await that.requestCoreAsync(url, 'GET', null, options, (modOptions) => {
@@ -41,7 +41,7 @@ export class CoolHttp {
         });
     }
 
-    public async postAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<Response> {
+    public async postAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
         let that = this;
 
         return await that.requestCoreAsync(url, 'POST', data, options, (modOptions) => {
@@ -49,7 +49,7 @@ export class CoolHttp {
         });
     }
 
-    public async putAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<Response> {
+    public async putAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
         let that = this;
 
         return await that.requestCoreAsync(url, 'PUT', data, options, (modOptions) => {
@@ -57,7 +57,7 @@ export class CoolHttp {
         });
     }
 
-    public async deleteAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<Response> {
+    public async deleteAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
         let that = this;
 
         return await that.requestCoreAsync(url, 'DELETE', null, options, (modOptions) => {
@@ -65,7 +65,7 @@ export class CoolHttp {
         });
     }
 
-    public async patchAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<Response> {
+    public async patchAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
         let that = this;
 
         return await that.requestCoreAsync(url, 'PATCH', data, options, (modOptions) => {
@@ -73,7 +73,7 @@ export class CoolHttp {
         });
     }
 
-    public async headAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<Response> {
+    public async headAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
         let that = this;
 
         return await that.requestCoreAsync(url, 'HEAD', null, options, (modOptions) => {
@@ -81,7 +81,9 @@ export class CoolHttp {
         });
     }
 
-    private async requestCoreAsync(url: string, method: string, data: any, options: RequestOptions, action: Func<RequestOptions, Observable<Response>>): Promise<Response> {
+    private async requestCoreAsync(url: string, method: string, data: any, options: RequestOptions, action: Func<RequestOptions, Observable<Response>>): Promise<any> {
+        options.headers = options.headers || new Headers();
+        
         this.appendGlobalHeaders(options.headers);
 
         var clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
@@ -89,10 +91,14 @@ export class CoolHttp {
         await this.invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
 
         var response = await action(options).toPromise();
+        
+        if(!response.ok) {
+            throw new Error('Failed to call api');
+        }
 
         await this.invokeResponseInterceptorsAsync(response, url, method, data, clientHeaders);
 
-        return response;
+        return response.json();
     }
     
     public getObservable(url: string, options: RequestOptions = new RequestOptions()) : Observable<Response> {
