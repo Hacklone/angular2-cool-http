@@ -28,9 +28,33 @@ export class CoolHttp {
     public registerRequestInterceptor(requestInterceptor: IRequestInterceptor): void {
         this._requestInterceptors.push(requestInterceptor);
     }
+    
+    public deregisterRequestInterceptor(requestInterceptor: IRequestInterceptor): boolean {
+        let indexOfItem = this._requestInterceptors.indexOf(requestInterceptor);
+        
+        if(indexOfItem === -1) {
+            return false;
+        }
+        
+        this._requestInterceptors.splice(indexOfItem, 1);
+        
+        return true;
+    }
 
     public registerResponseInterceptor(responseInterceptor: IResponseInterceptor): void {
         this._responseInterceptors.push(responseInterceptor);
+    }
+    
+    public deregisterResponseInterceptor(responseInterceptor: IResponseInterceptor): boolean {
+        let indexOfItem = this._responseInterceptors.indexOf(responseInterceptor);
+        
+        if(indexOfItem === -1) {
+            return false;
+        }
+        
+        this._responseInterceptors.splice(indexOfItem, 1);
+        
+        return true;
     }
 
     public async getAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {

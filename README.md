@@ -81,6 +81,9 @@ coolHttp.registerGlobalHeader(new HttpHeader('MyHttpHeader', 'MyHeadersValue'));
 CoolHttp's api calls will invoke the registered request interceptors before sending the request
 - only works with async api calls at the moment
 
+- registerRequestInterceptor(requestInterceptor)
+- deregisterRequestInterceptor(requestInterceptor)
+
 ```javascript
 coolHttp.registerRequestInterceptor({
     beforeRequestAsync: function(url, method, data, headers) {
@@ -95,6 +98,9 @@ coolHttp.registerRequestInterceptor({
 
 ### Response Interceptors
 CoolHttp's api calls will invoke the registered response interceptors after receiving the response
+
+- registerResponseInterceptor(responseInterceptor)
+- deregisterResponseInterceptor(responseInterceptor)
 
 ```javascript
 coolHttp.registerResponseInterceptor({
