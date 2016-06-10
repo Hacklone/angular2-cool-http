@@ -110,17 +110,25 @@ export class CoolHttp {
         
         this.appendGlobalHeaders(options.headers);
 
-        var clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
+        let clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
 
-        await this.invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
+        let shouldIntercept = await this.invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
 
-        var response = await action(options).toPromise();
-        
-        if(!response.ok) {
-            throw new Error('Failed to call api');
+        if(shouldIntercept) {
+            return;
         }
 
-        await this.invokeResponseInterceptorsAsync(response, url, method, data, clientHeaders);
+        let response = await action(options).toPromise();
+        
+        shouldIntercept = await this.invokeResponseInterceptorsAsync(response, url, method, data, clientHeaders);
+
+        if(shouldIntercept) {
+            return;
+        }
+        
+        if(!response.ok) {
+            throw new Error(`Failed to call api ${method} ${url}`);
+        }        
 
         return response.json();
     }
@@ -199,16 +207,28 @@ export class CoolHttp {
         }
     }
 
-    private async invokeRequestInterceptorsAsync(url: string, method: string, data: any, headers: HttpHeader[]): Promise<void> {
+    private async invokeRequestInterceptorsAsync(url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
         for (var requestInterceptor of this._requestInterceptors) {
-            await requestInterceptor.beforeRequestAsync(url, method, data, headers);
+            var shouldIntercept = await requestInterceptor.beforeRequestAsync(url, method, data, headers);
+
+            if(shouldIntercept) {
+                return true;
+            }
         }
+
+        return false;
     }
 
-    private async invokeResponseInterceptorsAsync(response: Response, url: string, method: string, data: any, headers: HttpHeader[]): Promise<void> {
+    private async invokeResponseInterceptorsAsync(response: Response, url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
         for (var responseInterceptor of this._responseInterceptors) {
-            await responseInterceptor.afterResponseAsync(response, url, method, data, headers);
+            var shouldIntercept = await responseInterceptor.afterResponseAsync(response, url, method, data, headers);
+
+            if(shouldIntercept) {
+                return true;
+            }
         }
+
+        return false;
     }
 
     private convertAngularHeadersToHttpClientHeaders(headers: Headers): HttpHeader[] {

@@ -90,9 +90,11 @@ CoolHttp's api calls will invoke the registered request interceptors before send
 coolHttp.registerRequestInterceptor({
     beforeRequestAsync: function(url, method, data, headers) {
         return new Promise((resolve, reject) => {
-            //do something 
+            // do something 
             
-            resolve();
+            // resolve with true to fully intercept request
+            // resolve with false to let the request continue
+            resolve(false);
         });
     }
 });
@@ -110,7 +112,9 @@ coolHttp.registerResponseInterceptor({
         return new Promise((resolve, reject) => {
             //do something 
             
-            resolve();
+            // resolve with true to fully intercept the response handling
+            // resolve with false to let the response handling continue
+            resolve(true);
         });
     }
 });
