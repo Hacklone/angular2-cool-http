@@ -1,6 +1,6 @@
 {
   "name": "angular2-cool-http",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Cool features over angular2 Http Client.",
   "main": "index.js",
   "jsnext:main": "esm/index.js",
@@ -26,7 +26,11 @@
     "headers",
     "interceptors",
     "cool",
-    "cool-http"
+    "cool-http",
+    "xsrf",
+    "csrf",
+    "token",
+    "xsrf-token"
   ],
   "author": "Hacklone <toakak@gmail.com>",
   "license": "MIT",

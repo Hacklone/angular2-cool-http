@@ -120,7 +120,10 @@ coolHttp.registerResponseInterceptor({
 });
 ```
 
-#License
+## Automatic XSRF token sending
+CoolHttp will automatically send the ```XSRF-TOKEN``` cookie's value in every request's ```X-XSRF-TOKEN``` header.
+
+## License
 > The MIT License (MIT)
 
 > Copyright (c) 2016 Hacklone

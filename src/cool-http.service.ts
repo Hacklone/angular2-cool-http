@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
-import { HttpHeader } from './http-header.model'
-import { IRequestInterceptor } from './request-interceptor.interface'
-import { IResponseInterceptor } from './response-interceptor.interface'
+import { HttpHeader } from './http-header.model';
+import { CookieStore } from './cookie-store.service';
+import { IRequestInterceptor } from './request-interceptor.interface';
+import { IResponseInterceptor } from './response-interceptor.interface';
 
 interface Func<T, TResult> {
     (item: T): TResult;
@@ -12,7 +13,10 @@ interface Func<T, TResult> {
 
 @Injectable()
 export class CoolHttp {
-    _http: Http;
+    _http: Http
+
+    _cookieStore: CookieStore = new CookieStore()
+
     _globalHeaders: HttpHeader[] = []
     _requestInterceptors: IRequestInterceptor[] = []
     _responseInterceptors: IResponseInterceptor[] = []
@@ -110,6 +114,8 @@ export class CoolHttp {
         
         this.appendGlobalHeaders(options.headers);
 
+        this.tryAppendXSRFHeader(options.headers);
+
         let clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
 
         let shouldIntercept = await this.invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
@@ -184,6 +190,8 @@ export class CoolHttp {
     private requestCoreObserable(url: string, method: string, data: any, options: RequestOptions, action: Func<RequestOptions, Observable<Response>>): Observable<Response> {
         this.appendGlobalHeaders(options.headers);
 
+        this.tryAppendXSRFHeader(options.headers);
+
         var clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
 
         var observable = action(options);
@@ -204,6 +212,14 @@ export class CoolHttp {
     private appendGlobalHeaders(headers: Headers): void {
         for (var registeredHeader of this._globalHeaders) {
             headers.append(registeredHeader.key, registeredHeader.value);
+        }
+    }
+
+    private tryAppendXSRFHeader(headers: Headers): void {
+        var xsrfToken = this._cookieStore.getCookie('XSRF-TOKEN');
+
+        if(xsrfToken) {
+            headers.append('X-XSRF-TOKEN', xsrfToken);
         }
     }
 
