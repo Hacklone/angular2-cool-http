@@ -124,7 +124,14 @@ export class CoolHttp {
             return;
         }
 
-        let response = await action(options).toPromise();
+        let response;
+        
+        try {
+            response = await action(options).toPromise();
+        }
+        catch(errorResponse) {
+            response = errorResponse;
+        }
         
         shouldIntercept = await this.invokeResponseInterceptorsAsync(response, url, method, data, clientHeaders);
 
@@ -134,9 +141,18 @@ export class CoolHttp {
         
         if(!response.ok) {
             throw new Error(`Failed to call api ${method} ${url}`);
-        }        
+        }
 
-        return response.json();
+        let returnValue;
+
+        try {
+            returnValue = response.json();
+        }
+        catch(e) {
+            returnValue = response.text();
+        }
+
+        return returnValue;
     }
     
     public getObservable(url: string, options: RequestOptions = new RequestOptions()) : Observable<Response> {
