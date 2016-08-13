@@ -117,8 +117,12 @@ coolHttp.registerResponseInterceptor({
 });
 ```
 
-## Automatic XSRF token sending
-CoolHttp will automatically send the ```XSRF-TOKEN``` cookie's value in every request's ```X-XSRF-TOKEN``` header.
+## Automatic cookie to custom header sending
+You can configurure CoolHttp to copy and send a cookie value in a custom http header.
+
+```javascript
+coolHttp.sendCookieValueInCustomHeader(cookieName, headerName);
+```
 
 ## License
 > The MIT License (MIT)

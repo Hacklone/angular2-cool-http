@@ -20,6 +20,7 @@ export class CoolHttp {
     _globalHeaders: HttpHeader[] = []
     _requestInterceptors: IRequestInterceptor[] = []
     _responseInterceptors: IResponseInterceptor[] = []
+    _customCookieToHeaders = [];
 
     constructor(http: Http) {
         this._http = http;
@@ -59,6 +60,13 @@ export class CoolHttp {
         this._responseInterceptors.splice(indexOfItem, 1);
         
         return true;
+    }
+
+    public sendCookieValueInCustomHeader(cookieName: string, customHeaderName: string): void {
+        this._customCookieToHeaders.push({
+            cookieName: cookieName,
+            customHeaderName: customHeaderName
+        });
     }
 
     public async getAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
@@ -114,7 +122,7 @@ export class CoolHttp {
         
         this.appendGlobalHeaders(options.headers);
 
-        this.tryAppendXSRFHeader(options.headers);
+        this.tryAppendRegisteredCookiestoCustomHeaders(options.headers);
 
         let clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
 
@@ -206,13 +214,13 @@ export class CoolHttp {
     private requestCoreObserable(url: string, method: string, data: any, options: RequestOptions, action: Func<RequestOptions, Observable<Response>>): Observable<Response> {
         this.appendGlobalHeaders(options.headers);
 
-        this.tryAppendXSRFHeader(options.headers);
+        this.tryAppendRegisteredCookiestoCustomHeaders(options.headers);
 
-        var clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
+        const clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
 
-        var observable = action(options);
+        let observable = action(options);
         
-        for(let responseInterceptor of this._responseInterceptors) {
+        for(const responseInterceptor of this._responseInterceptors) {
             observable = observable.lift<Response>(function(responseInterceptor, url, method, data, clientHeaders) {
                 return (response) => {
                     return Observable.defer(function() {
@@ -226,22 +234,24 @@ export class CoolHttp {
     } 
 
     private appendGlobalHeaders(headers: Headers): void {
-        for (var registeredHeader of this._globalHeaders) {
+        for (const registeredHeader of this._globalHeaders) {
             headers.append(registeredHeader.key, registeredHeader.value);
         }
     }
 
-    private tryAppendXSRFHeader(headers: Headers): void {
-        var xsrfToken = this._cookieStore.getCookie('XSRF-TOKEN');
+    private tryAppendRegisteredCookiestoCustomHeaders(headers: Headers): void {
+        for (const cookieToHeader of this._customCookieToHeaders) {
+            const cookieValue = this._cookieStore.getCookie(cookieToHeader.cookieName);
 
-        if(xsrfToken) {
-            headers.append('X-XSRF-TOKEN', xsrfToken);
+            if (cookieValue) {
+                headers.append(cookieToHeader.customHeaderName, cookieValue);
+            }
         }
     }
 
     private async invokeRequestInterceptorsAsync(url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
-        for (var requestInterceptor of this._requestInterceptors) {
-            var shouldIntercept = await requestInterceptor.beforeRequestAsync(url, method, data, headers);
+        for (const requestInterceptor of this._requestInterceptors) {
+            const shouldIntercept = await requestInterceptor.beforeRequestAsync(url, method, data, headers);
 
             if(shouldIntercept) {
                 return true;
@@ -252,8 +262,8 @@ export class CoolHttp {
     }
 
     private async invokeResponseInterceptorsAsync(response: Response, url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
-        for (var responseInterceptor of this._responseInterceptors) {
-            var shouldIntercept = await responseInterceptor.afterResponseAsync(response, url, method, data, headers);
+        for (const responseInterceptor of this._responseInterceptors) {
+            const shouldIntercept = await responseInterceptor.afterResponseAsync(response, url, method, data, headers);
 
             if(shouldIntercept) {
                 return true;
@@ -265,7 +275,7 @@ export class CoolHttp {
 
     private convertAngularHeadersToHttpClientHeaders(headers: Headers): HttpHeader[] {
         return headers.keys().map(headerKey => {
-            var httpClientHeader = new HttpHeader();
+            const httpClientHeader = new HttpHeader();
 
             httpClientHeader.key = headerKey;
             httpClientHeader.value = headers.get(headerKey);
