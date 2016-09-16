@@ -22,6 +22,7 @@ export class CoolHttp {
   private _responseInterceptors: IResponseInterceptor[] = [];
   private _customCookieToHeaders = [];
   private _baseUrl;
+  private _withCredentials;
 
   constructor(http: Http) {
     this._http = http;
@@ -33,6 +34,10 @@ export class CoolHttp {
     if (this._baseUrl[this._baseUrl.length - 1] !== '/') {
       this._baseUrl += '/';
     }
+  }
+
+  public setWithCredentials(status: boolean): void {
+    this._withCredentials = status;
   }
 
   public registerGlobalHeader(header: HttpHeader): void {
@@ -135,6 +140,8 @@ export class CoolHttp {
 
     this.tryAppendRegisteredCookiestoCustomHeaders(options.headers);
 
+    this.modifyOptions(options);
+
     let clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
 
     let shouldIntercept = await this.invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
@@ -230,6 +237,8 @@ export class CoolHttp {
 
     this.tryAppendRegisteredCookiestoCustomHeaders(options.headers);
 
+    this.modifyOptions(options);
+
     const clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
 
     let observable = action(url, data, options);
@@ -255,6 +264,12 @@ export class CoolHttp {
     }
 
     return returnUrl;
+  }
+
+  private modifyOptions(options: RequestOptions) {
+    if (this._withCredentials) {
+      options.withCredentials = true;
+    }
   }
 
   private appendGlobalHeaders(headers: Headers): void {
