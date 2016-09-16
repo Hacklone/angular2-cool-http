@@ -21,6 +21,13 @@ export class MyAppModule {}
 ```
 
 ## Features
+### global base url
+CoolHttp's api calls will always prefix your url with the baseUrl set (Great for cross origin websites)
+
+```javascript
+coolHttp.registerBaseUrl('https://my.api.com/');
+```
+
 ### Async Api calls
 - getAsync(url, options)
 - postAsync(url, data, options)
