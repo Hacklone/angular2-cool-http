@@ -13,13 +13,13 @@ interface Func<T, TResult> {
 
 @Injectable()
 export class CoolHttp {
-    _http: Http
+    _http: Http;
 
-    _cookieStore: CookieStore = new CookieStore()
+    _cookieStore: CookieStore = new CookieStore();
 
-    _globalHeaders: HttpHeader[] = []
-    _requestInterceptors: IRequestInterceptor[] = []
-    _responseInterceptors: IResponseInterceptor[] = []
+    _globalHeaders: HttpHeader[] = [];
+    _requestInterceptors: IRequestInterceptor[] = [];
+    _responseInterceptors: IResponseInterceptor[] = [];
     _customCookieToHeaders = [];
 
     constructor(http: Http) {
@@ -212,6 +212,8 @@ export class CoolHttp {
     }
     
     private requestCoreObserable(url: string, method: string, data: any, options: RequestOptions, action: Func<RequestOptions, Observable<Response>>): Observable<Response> {
+        options.headers = options.headers || new Headers();
+
         this.appendGlobalHeaders(options.headers);
 
         this.tryAppendRegisteredCookiestoCustomHeaders(options.headers);
