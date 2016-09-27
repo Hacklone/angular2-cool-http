@@ -184,7 +184,7 @@ export class CoolHttp {
   public getObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObserable(url, 'GET', null, options, (url, data, modOptions) => {
+    return that.requestCoreObservable(url, 'GET', null, options, (url, data, modOptions) => {
       return that._http.get(url, modOptions);
     });
   }
@@ -192,7 +192,7 @@ export class CoolHttp {
   public postObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObserable(url, 'POST', data, options, (url, data, modOptions) => {
+    return that.requestCoreObservable(url, 'POST', data, options, (url, data, modOptions) => {
       return that._http.post(url, data, modOptions);
     });
   }
@@ -200,7 +200,7 @@ export class CoolHttp {
   public putObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObserable(url, 'PUT', data, options, (url, data, modOptions) => {
+    return that.requestCoreObservable(url, 'PUT', data, options, (url, data, modOptions) => {
       return that._http.put(url, data, modOptions);
     });
   }
@@ -208,7 +208,7 @@ export class CoolHttp {
   public deleteObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObserable(url, 'DELETE', null, options, (url, data, modOptions) => {
+    return that.requestCoreObservable(url, 'DELETE', null, options, (url, data, modOptions) => {
       return that._http['delete'](url, modOptions);
     });
   }
@@ -216,7 +216,7 @@ export class CoolHttp {
   public patchObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObserable(url, 'PATCH', data, options, (url, data, modOptions) => {
+    return that.requestCoreObservable(url, 'PATCH', data, options, (url, data, modOptions) => {
       return that._http.patch(url, data, modOptions);
     });
   }
@@ -224,36 +224,13 @@ export class CoolHttp {
   public headObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObserable(url, 'HEAD', null, options, (url, data, modOptions) => {
+    return that.requestCoreObservable(url, 'HEAD', null, options, (url, data, modOptions) => {
       return that._http.head(url, modOptions);
     });
   }
 
-  private requestCoreObserable(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Observable<Response> {
-    options.headers = options.headers || new Headers();
-    url = this.convertUrl(url);
-
-    this.appendGlobalHeaders(options.headers);
-
-    this.tryAppendRegisteredCookiestoCustomHeaders(options.headers);
-
-    this.modifyOptions(options);
-
-    const clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
-
-    let observable = action(url, data, options);
-
-    for (const responseInterceptor of this._responseInterceptors) {
-      observable = observable.lift<Response>(function (responseInterceptor, url, method, data, clientHeaders) {
-        return (response) => {
-          return Observable.defer(function () {
-            return responseInterceptor(response, url, method, data, clientHeaders);
-          });
-        };
-      }(responseInterceptor, url, method, data, clientHeaders));
-    }
-
-    return observable;
+  private requestCoreObservable(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Observable<Response> {
+    return Observable.fromPromise(this.requestCoreAsync(url, method, data, options, action));
   }
 
   private convertUrl(url: string) {

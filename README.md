@@ -92,7 +92,6 @@ coolHttp.registerGlobalHeader(new HttpHeader('MyHttpHeader', 'MyHeadersValue'));
 
 ### Request Interceptors
 CoolHttp's api calls will invoke the registered request interceptors before sending the request
-- only works with async api calls at the moment
 
 - registerRequestInterceptor(requestInterceptor)
 - deregisterRequestInterceptor(requestInterceptor)
@@ -132,7 +131,7 @@ coolHttp.registerResponseInterceptor({
 ```
 
 ## Automatic cookie to custom header sending
-You can configurure CoolHttp to copy and send a cookie value in a custom http header.
+You can configure CoolHttp to copy and send a cookie value in a custom http header.
 
 ```javascript
 coolHttp.sendCookieValueInCustomHeader(cookieName, headerName);
