@@ -1,6 +1,7 @@
 export class CookieStore {
-  lastReadRawCookieCollection: string
-  lastReadCookieCollection: Object
+  lastReadRawCookieCollection: string;
+
+  lastReadCookieCollection: any;
 
   public getCookie(key: string): string {
     let cookieCollection = this.getCookieCollection();
@@ -8,7 +9,7 @@ export class CookieStore {
     return cookieCollection[key];
   }
 
-  public getCookieCollection(): Object {
+  public getCookieCollection(): any {
     let currentRawCookie = document.cookie;
 
     if (currentRawCookie === this.lastReadRawCookieCollection) {
@@ -25,9 +26,9 @@ export class CookieStore {
         let indexOfEqualSign = cookie.indexOf('=');
 
         if (indexOfEqualSign > 0) {
-          let cookieName = this.tryDecodeUriComponent(cookie.substring(0, indexOfEqualSign));
+          let cookieName = CookieStore.tryDecodeUriComponent(cookie.substring(0, indexOfEqualSign));
 
-          this.lastReadCookieCollection[cookieName] = this.tryDecodeUriComponent(cookie.substring(indexOfEqualSign + 1));
+          this.lastReadCookieCollection[cookieName] = CookieStore.tryDecodeUriComponent(cookie.substring(indexOfEqualSign + 1));
         }
       }
     }
@@ -35,7 +36,7 @@ export class CookieStore {
     return this.lastReadCookieCollection;
   }
 
-  private tryDecodeUriComponent(uriComponent: string): string {
+  private static tryDecodeUriComponent(uriComponent: string): string {
     try {
       return decodeURIComponent(uriComponent);
     }
