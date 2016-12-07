@@ -1,6 +1,8 @@
 /dist
 /tmp
 
+/compiled
+
 /node_modules
 /typings
 

@@ -7,7 +7,7 @@ import { CookieStore } from './cookie-store.service';
 import { IRequestInterceptor } from './request-interceptor.interface';
 import { IResponseInterceptor } from './response-interceptor.interface';
 
-interface Func<T, T1, T2, TResult> {
+export interface Func<T, T1, T2, TResult> {
   (item: T, item1: T1, item2: T2): TResult;
 }
 

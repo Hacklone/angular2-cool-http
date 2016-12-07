@@ -1,23 +1,26 @@
 {
-  "compileOnSave": true,
   "compilerOptions": {
     "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "mapRoot": "",
     "lib": [
       "es6",
       "dom"
     ],
+    "mapRoot": "",
     "module": "commonjs",
     "moduleResolution": "node",
-    "noEmitOnError": true,
+    "noEmitOnError": false,
     "noImplicitAny": false,
     "outDir": "dist",
     "rootDir": ".",
     "sourceMap": true,
-    "target": "es5",
+    "target": "es2015",
     "inlineSources": true
+  },
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true,
+    "skipTemplateCodegen": true
   },
   "files": [
     "index.ts"
