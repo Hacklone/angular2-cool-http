@@ -7,7 +7,7 @@
       "es6",
       "dom"
     ],
-    "mapRoot": "",
+    "mapRoot": "../../../../..",
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitOnError": false,
@@ -15,7 +15,7 @@
     "outDir": "dist",
     "rootDir": ".",
     "sourceMap": true,
-    "target": "es2015",
+    "target": "es5",
     "inlineSources": true
   },
   "angularCompilerOptions": {

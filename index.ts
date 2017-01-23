@@ -9,7 +9,7 @@ export { IRequestInterceptor } from './src/request-interceptor.interface';
 export { IResponseInterceptor } from './src/response-interceptor.interface';
 
 @NgModule({
-  exports: [HttpModule],
+  exports: [],
   imports: [HttpModule],
   providers: [CoolHttp]
 })
