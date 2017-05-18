@@ -36,12 +36,12 @@ coolHttp.setWithCredentials(true);
 ```
 
 ### Async Api calls
-- getAsync(url, options)
-- postAsync(url, data, options)
-- putAsync(url, data, options)
-- deleteAsync(url, options)
-- patchAsync(url, data, options)
-- headAsync(url, options)
+- getAsync(url: string, options: RequestOptions): Promise<any>
+- postAsync(url: string, data: any, options: RequestOptions): Promise<any>
+- putAsync(url: string, data: any, options: RequestOptions): Promise<any>
+- deleteAsync(url: string, options: RequestOptions): Promise<any>
+- patchAsync(url: string, data: any, options: RequestOptions): Promise<any>
+- headAsync(url: string, options: RequestOptions): Promise<any>
 
 ```javascript
 import { Component, OnInit } from '@angular/core';
@@ -74,12 +74,12 @@ export class AppComponent implements OnInit {
 ```
 
 ### Observable api calls
-- getObservable(url, options)
-- postObservable(url, data, options)
-- putObservable(url, data, options)
-- deleteObservable(url, options)
-- patchObservable(url, data, options)
-- headObservable(url, options)
+- getObservable(url: string, options: RequestOptions): Observable<Response>
+- postObservable(url: string, data: any, options: RequestOptions): Observable<Response>
+- putObservable(url: string, data: any, options: RequestOptions): Observable<Response>
+- deleteObservable(url: string, options: RequestOptions): Observable<Response>
+- patchObservable(url: string, data: any, options: RequestOptions): Observable<Response>
+- headObservable(url: string, options: RequestOptions): Observable<Response>
 
 ### Global headers
 CoolHttp's api calls will always send these globally registered headers. (Great for authentication)
@@ -90,11 +90,15 @@ import { CoolHttp, HttpHeader } from 'angular2-cool-http';
 coolHttp.registerGlobalHeader(new HttpHeader('MyHttpHeader', 'MyHeadersValue'));
 ```
 
+- registerGlobalHeader(header: HttpHeader): void
+- deregisterGlobalHeader(headerKey: string): boolean
+- removeAllRegisteredGlobalHeaders(): void
+
 ### Request Interceptors
 CoolHttp's api calls will invoke the registered request interceptors before sending the request
 
-- registerRequestInterceptor(requestInterceptor)
-- deregisterRequestInterceptor(requestInterceptor)
+- registerRequestInterceptor(requestInterceptor: IRequestInterceptor): void
+- deregisterRequestInterceptor(requestInterceptor: IRequestInterceptor): boolean
 
 ```javascript
 coolHttp.registerRequestInterceptor({
@@ -113,8 +117,8 @@ coolHttp.registerRequestInterceptor({
 ### Response Interceptors
 CoolHttp's api calls will invoke the registered response interceptors after receiving the response
 
-- registerResponseInterceptor(responseInterceptor)
-- deregisterResponseInterceptor(responseInterceptor)
+- registerResponseInterceptor(responseInterceptor: IResponseInterceptor): void
+- deregisterResponseInterceptor(responseInterceptor: IResponseInterceptor): boolean
 
 ```javascript
 coolHttp.registerResponseInterceptor({

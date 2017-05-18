@@ -41,7 +41,25 @@ export class CoolHttp {
   }
 
   public registerGlobalHeader(header: HttpHeader): void {
+    this.deregisterGlobalHeader(header.key);
+
     this._globalHeaders.push(header);
+  }
+
+  public deregisterGlobalHeader(headerKey: string): boolean {
+    const indexOfHeader = this._globalHeaders.findIndex(header => header.key === headerKey);
+
+    if (indexOfHeader === -1) {
+      return false;
+    }
+
+    this._globalHeaders.splice(indexOfHeader, 1);
+
+    return true;
+  }
+
+  public removeAllRegisteredGlobalHeaders(): void {
+    this._globalHeaders.length = 0;
   }
 
   public registerRequestInterceptor(requestInterceptor: IRequestInterceptor): void {
