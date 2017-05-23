@@ -1,20 +1,20 @@
 {
   "name": "angular2-cool-http",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Cool features over angular2 Http Client.",
   "main": "index.js",
   "jsnext:main": "esm/index.js",
   "typings": "index.d.ts",
   "peerDependencies": {
     "rxjs": "^5.2.0",
-    "@angular/core": "2.4.8",
-    "@angular/http": "2.4.8"
+    "@angular/core": "^4.0.0",
+    "@angular/http": "^4.0.0"
   },
   "devDependencies": {
-    "@angular/compiler": "2.4.8",
-    "@angular/compiler-cli": "2.4.8",
-    "@angular/platform-server": "2.4.8",
-    "typescript": "2.2.1"
+    "@angular/compiler": "^4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
+    "@angular/platform-server": "^4.0.0",
+    "typescript": "^2.2.1"
   },
   "scripts": {
     "clean": "rm -rf ./dist",
