@@ -1,7 +1,7 @@
 {
   "name": "angular2-cool-http",
-  "version": "2.2.1",
-  "description": "Cool features over angular2 Http Client.",
+  "version": "2.3.0",
+  "description": "Cool features over angular Http Client.",
   "main": "index.js",
   "jsnext:main": "esm/index.js",
   "typings": "index.d.ts",
@@ -28,6 +28,7 @@
   },
   "keywords": [
     "angular2",
+    "angular",
     "http",
     "httpclient",
     "interceptor",

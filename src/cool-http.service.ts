@@ -104,7 +104,7 @@ export class CoolHttp {
   public async getAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
     let that = this;
 
-    return await that.requestCoreAsync(url, 'GET', null, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync(url, 'GET', null, options, (url, data, modOptions) => {
       return that._http.get(url, modOptions);
     });
   }
@@ -112,7 +112,7 @@ export class CoolHttp {
   public async postAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
     let that = this;
 
-    return await that.requestCoreAsync(url, 'POST', data, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync(url, 'POST', data, options, (url, data, modOptions) => {
       return that._http.post(url, data, modOptions);
     });
   }
@@ -120,7 +120,7 @@ export class CoolHttp {
   public async putAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
     let that = this;
 
-    return await that.requestCoreAsync(url, 'PUT', data, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync(url, 'PUT', data, options, (url, data, modOptions) => {
       return that._http.put(url, data, modOptions);
     });
   }
@@ -128,7 +128,7 @@ export class CoolHttp {
   public async deleteAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
     let that = this;
 
-    return await that.requestCoreAsync(url, 'DELETE', null, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync(url, 'DELETE', null, options, (url, data, modOptions) => {
       return that._http['delete'](url, modOptions);
     });
   }
@@ -136,7 +136,7 @@ export class CoolHttp {
   public async patchAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
     let that = this;
 
-    return await that.requestCoreAsync(url, 'PATCH', data, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync(url, 'PATCH', data, options, (url, data, modOptions) => {
       return that._http.patch(url, data, modOptions);
     });
   }
@@ -144,29 +144,31 @@ export class CoolHttp {
   public async headAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
     let that = this;
 
-    return await that.requestCoreAsync(url, 'HEAD', null, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync(url, 'HEAD', null, options, (url, data, modOptions) => {
       return that._http.head(url, modOptions);
     });
   }
 
-  private async requestCoreAsync(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Promise<any> {
+  private async _requestCoreAsync(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Promise<any> {
     options.headers = options.headers || new Headers();
 
-    url = this.convertUrl(url);
+    url = this._convertUrl(url);
 
-    this.appendGlobalHeaders(options.headers);
+    this._appendGlobalHeaders(options.headers);
 
-    this.tryAppendRegisteredCookiestoCustomHeaders(options.headers);
+    this._tryAppendRegisteredCookiestoCustomHeaders(options.headers);
 
-    this.modifyOptions(options);
+    this._modifyOptions(options);
 
-    let clientHeaders = this.convertAngularHeadersToHttpClientHeaders(options.headers);
+    let clientHeaders = this._convertAngularHeadersToHttpClientHeaders(options.headers);
 
-    let shouldIntercept = await this.invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
+    let shouldIntercept = await this._invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
 
     if (shouldIntercept) {
       return;
     }
+
+    this._updateAngularHeadersFromHttpClientHeaders(clientHeaders, options.headers);
 
     let response;
 
@@ -177,7 +179,7 @@ export class CoolHttp {
       response = errorResponse;
     }
 
-    shouldIntercept = await this.invokeResponseInterceptorsAsync(response, url, method, data, clientHeaders);
+    shouldIntercept = await this._invokeResponseInterceptorsAsync(response, url, method, data, clientHeaders);
 
     if (shouldIntercept) {
       return;
@@ -202,7 +204,7 @@ export class CoolHttp {
   public getObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObservable(url, 'GET', null, options, (url, data, modOptions) => {
+    return that._requestCoreObservable(url, 'GET', null, options, (url, data, modOptions) => {
       return that._http.get(url, modOptions);
     });
   }
@@ -210,7 +212,7 @@ export class CoolHttp {
   public postObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObservable(url, 'POST', data, options, (url, data, modOptions) => {
+    return that._requestCoreObservable(url, 'POST', data, options, (url, data, modOptions) => {
       return that._http.post(url, data, modOptions);
     });
   }
@@ -218,7 +220,7 @@ export class CoolHttp {
   public putObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObservable(url, 'PUT', data, options, (url, data, modOptions) => {
+    return that._requestCoreObservable(url, 'PUT', data, options, (url, data, modOptions) => {
       return that._http.put(url, data, modOptions);
     });
   }
@@ -226,7 +228,7 @@ export class CoolHttp {
   public deleteObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObservable(url, 'DELETE', null, options, (url, data, modOptions) => {
+    return that._requestCoreObservable(url, 'DELETE', null, options, (url, data, modOptions) => {
       return that._http['delete'](url, modOptions);
     });
   }
@@ -234,7 +236,7 @@ export class CoolHttp {
   public patchObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObservable(url, 'PATCH', data, options, (url, data, modOptions) => {
+    return that._requestCoreObservable(url, 'PATCH', data, options, (url, data, modOptions) => {
       return that._http.patch(url, data, modOptions);
     });
   }
@@ -242,16 +244,16 @@ export class CoolHttp {
   public headObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
     let that = this;
 
-    return that.requestCoreObservable(url, 'HEAD', null, options, (url, data, modOptions) => {
+    return that._requestCoreObservable(url, 'HEAD', null, options, (url, data, modOptions) => {
       return that._http.head(url, modOptions);
     });
   }
 
-  private requestCoreObservable(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Observable<Response> {
-    return Observable.fromPromise(this.requestCoreAsync(url, method, data, options, action));
+  private _requestCoreObservable(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Observable<Response> {
+    return Observable.fromPromise(this._requestCoreAsync(url, method, data, options, action));
   }
 
-  private convertUrl(url: string) {
+  private _convertUrl(url: string) {
     let returnUrl = url;
 
     if (this._baseUrl) {
@@ -261,19 +263,19 @@ export class CoolHttp {
     return returnUrl;
   }
 
-  private modifyOptions(options: RequestOptions) {
+  private _modifyOptions(options: RequestOptions) {
     if (this._withCredentials) {
       options.withCredentials = true;
     }
   }
 
-  private appendGlobalHeaders(headers: Headers): void {
+  private _appendGlobalHeaders(headers: Headers): void {
     for (const registeredHeader of this._globalHeaders) {
       headers.append(registeredHeader.key, registeredHeader.value);
     }
   }
 
-  private tryAppendRegisteredCookiestoCustomHeaders(headers: Headers): void {
+  private _tryAppendRegisteredCookiestoCustomHeaders(headers: Headers): void {
     for (const cookieToHeader of this._customCookieToHeaders) {
       const cookieValue = this._cookieStore.getCookie(cookieToHeader.cookieName);
 
@@ -283,7 +285,7 @@ export class CoolHttp {
     }
   }
 
-  private async invokeRequestInterceptorsAsync(url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
+  private async _invokeRequestInterceptorsAsync(url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
     for (const requestInterceptor of this._requestInterceptors) {
       const shouldIntercept = await requestInterceptor.beforeRequestAsync(url, method, data, headers);
 
@@ -295,7 +297,7 @@ export class CoolHttp {
     return false;
   }
 
-  private async invokeResponseInterceptorsAsync(response: Response, url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
+  private async _invokeResponseInterceptorsAsync(response: Response, url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
     for (const responseInterceptor of this._responseInterceptors) {
       const shouldIntercept = await responseInterceptor.afterResponseAsync(response, url, method, data, headers);
 
@@ -307,7 +309,7 @@ export class CoolHttp {
     return false;
   }
 
-  private convertAngularHeadersToHttpClientHeaders(headers: Headers): HttpHeader[] {
+  private _convertAngularHeadersToHttpClientHeaders(headers: Headers): HttpHeader[] {
     return headers.keys().map(headerKey => {
       const httpClientHeader = new HttpHeader();
 
@@ -316,5 +318,15 @@ export class CoolHttp {
 
       return httpClientHeader;
     });
+  }
+
+  private _updateAngularHeadersFromHttpClientHeaders(httpClientHeaders: HttpHeader[], headers: Headers): void {
+    for (const clientHeader of httpClientHeaders) {
+      const headerValue = headers.get(clientHeader.key);
+
+      if (headerValue !== clientHeader.value) {
+        headers.set(clientHeader.key, clientHeader.value);
+      }
+    }
   }
 }
