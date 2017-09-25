@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "module": "amd",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "noImplicitAny": false,
+    "outFile": "cool-http.spec.js",
+    "rootDir": ".",
+    "sourceMap": false,
+    "target": "es5"
+  },
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true,
+    "skipTemplateCodegen": true
+  },
+  "files": [
+    "cool-http.spec.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -1,4 +1,4 @@
-export class HttpHeader {
+export class CoolHttpHeader {
   key: string;
 
   value: string;
