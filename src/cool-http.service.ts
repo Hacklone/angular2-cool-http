@@ -35,6 +35,10 @@ export class CoolHttp {
       this._baseUrl += '/';
     }
   }
+  
+  public deRegisterBaseUrl(): void {
+    this._baseUrl = '';
+  }
 
   public setWithCredentials(status: boolean): void {
     this._withCredentials = status;
