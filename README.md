@@ -28,6 +28,10 @@ CoolHttp's api calls will always prefix your url with the baseUrl set (Great for
 coolHttp.registerBaseUrl('https://my.api.com/');
 ```
 
+```javascript
+coolHttp.deRegisterBaseUrl();
+```
+
 ### Global withCredentials
 CoolHttp's api calls will always send cookies to cross domain requests (Great for cross origin websites)
 
