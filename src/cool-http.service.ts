@@ -28,6 +28,10 @@ export class CoolHttp {
     this._http = http;
   }
 
+  public get baseUrl(): string {
+    return this._baseUrl;
+  }
+
   public registerBaseUrl(baseUrl: string): void {
     this._baseUrl = baseUrl;
 
