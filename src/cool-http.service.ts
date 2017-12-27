@@ -6,6 +6,7 @@ import { HttpHeader } from './http-header.model';
 import { CookieStore } from './cookie-store.service';
 import { IRequestInterceptor } from './request-interceptor.interface';
 import { IResponseInterceptor } from './response-interceptor.interface';
+import { HttpError } from './http-error.model';
 
 export interface Func<T, T1, T2, TResult> {
   (item: T, item1: T1, item2: T2): TResult;
@@ -178,7 +179,7 @@ export class CoolHttp {
 
     this._updateAngularHeadersFromHttpClientHeaders(clientHeaders, options.headers);
 
-    let response;
+    let response: Response;
 
     try {
       response = await action(url, data, options).toPromise();
@@ -194,7 +195,7 @@ export class CoolHttp {
     }
 
     if (!response.ok) {
-      throw new Error(`Failed to call api ${method} ${url}`);
+      throw new HttpError(method, url, response.status, response.statusText, response.text());
     }
 
     let returnValue;
