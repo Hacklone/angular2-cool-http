@@ -7,6 +7,6 @@ export class HttpError extends Error {
     super(`Failed to call api ${method} ${url}, status code: ${status}`);
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, HttpError.prototype);
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
