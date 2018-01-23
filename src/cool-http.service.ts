@@ -156,10 +156,10 @@ export class CoolHttp {
     });
   }
 
-  private async _requestCoreAsync<T = any>(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<HttpResponse<Object>>>): Promise<T> {
+  private async _requestCoreAsync<T = any>(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<HttpResponse<string>>>): Promise<T> {
     options.headers = options.headers || new HttpHeaders();
     options.observe = 'response';
-    options.responseType = 'json';
+    options.responseType = 'text';
 
     url = this._convertUrl(url);
 
@@ -179,7 +179,7 @@ export class CoolHttp {
 
     this._updateAngularHeadersFromHttpClientHeaders(clientHeaders, <HttpHeaders> options.headers);
 
-    let response: HttpResponse<Object>;
+    let response: HttpResponse<string>;
 
     try {
       response = await action(url, data, options).toPromise();
@@ -198,7 +198,16 @@ export class CoolHttp {
       throw new HttpError(method, url, response.status, response.statusText, JSON.stringify(response.body));
     }
 
-    return <T> response.body;
+    let returnValue;
+
+    try {
+      returnValue = JSON.parse(response.body);
+    }
+    catch (e) {
+      returnValue = { data: response.body };
+    }
+
+    return <T> returnValue;
   }
 
   public getObservable<T = any>(url: string, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Observable<T> {
@@ -249,7 +258,7 @@ export class CoolHttp {
     });
   }
 
-  private _requestCoreObservable<T = any>(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<HttpResponse<Object>>>): Observable<T> {
+  private _requestCoreObservable<T = any>(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<HttpResponse<string>>>): Observable<T> {
     return Observable.fromPromise(this._requestCoreAsync(url, method, data, options, action));
   }
 
