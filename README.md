@@ -40,12 +40,12 @@ coolHttp.setWithCredentials(true);
 ```
 
 ### Async Api calls
-- getAsync(url: string, options: RequestOptions): Promise<any>
-- postAsync(url: string, data: any, options: RequestOptions): Promise<any>
-- putAsync(url: string, data: any, options: RequestOptions): Promise<any>
-- deleteAsync(url: string, options: RequestOptions): Promise<any>
-- patchAsync(url: string, data: any, options: RequestOptions): Promise<any>
-- headAsync(url: string, options: RequestOptions): Promise<any>
+- getAsync<T>(url: string, options: RequestOptions): Promise<T>
+- postAsync<T>(url: string, data: any, options: RequestOptions): Promise<T>
+- putAsync<T>(url: string, data: any, options: RequestOptions): Promise<T>
+- deleteAsync<T>(url: string, options: RequestOptions): Promise<T>
+- patchAsync<T>(url: string, data: any, options: RequestOptions): Promise<T>
+- headAsync<T>(url: string, options: RequestOptions): Promise<T>
 
 ```javascript
 import { Component, OnInit } from '@angular/core';
@@ -78,12 +78,12 @@ export class AppComponent implements OnInit {
 ```
 
 ### Observable api calls
-- getObservable(url: string, options: RequestOptions): Observable<Response>
-- postObservable(url: string, data: any, options: RequestOptions): Observable<Response>
-- putObservable(url: string, data: any, options: RequestOptions): Observable<Response>
-- deleteObservable(url: string, options: RequestOptions): Observable<Response>
-- patchObservable(url: string, data: any, options: RequestOptions): Observable<Response>
-- headObservable(url: string, options: RequestOptions): Observable<Response>
+- getObservable<T>(url: string, options: RequestOptions): Observable<T>
+- postObservable<T>(url: string, data: any, options: RequestOptions): Observable<T>
+- putObservable<T>(url: string, data: any, options: RequestOptions): Observable<T>
+- deleteObservable<T>(url: string, options: RequestOptions): Observable<T>
+- patchObservable<T>(url: string, data: any, options: RequestOptions): Observable<T>
+- headObservable<T>(url: string, options: RequestOptions): Observable<T>
 
 ### Global headers
 CoolHttp's api calls will always send these globally registered headers. (Great for authentication)

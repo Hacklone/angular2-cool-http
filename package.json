@@ -1,20 +1,20 @@
 {
   "name": "angular2-cool-http",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Cool features over angular Http Client.",
   "main": "index.js",
   "jsnext:main": "esm/index.js",
   "typings": "index.d.ts",
   "peerDependencies": {
     "rxjs": "^5.2.0",
-    "@angular/core": "^4.0.0",
-    "@angular/http": "^4.0.0"
+    "@angular/core": "^5.0.0",
+    "@angular/common": "^5.0.0"
   },
   "devDependencies": {
-    "@angular/compiler": "^4.0.0",
-    "@angular/compiler-cli": "^4.0.0",
-    "@angular/platform-server": "^4.0.0",
-    "typescript": "^2.2.1"
+    "@angular/compiler": "^5.0.0",
+    "@angular/compiler-cli": "^5.0.0",
+    "@angular/platform-server": "^5.0.0",
+    "typescript": "^2.3.0"
   },
   "scripts": {
     "clean": "rm -rf ./dist",
@@ -52,5 +52,10 @@
   "bugs": {
     "url": "https://github.com/Hacklone/angular2-cool-http/issues"
   },
-  "homepage": "https://github.com/Hacklone/angular2-cool-http#readme"
+  "homepage": "https://github.com/Hacklone/angular2-cool-http#readme",
+  "dependencies": {
+    "@angular/common": "^5.2.1",
+    "@angular/core": "^5.2.1",
+    "rxjs": "^5.5.6"
+  }
 }

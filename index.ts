@@ -1,5 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { CoolHttp } from './src/cool-http.service';
 
@@ -12,7 +12,7 @@ export * from './src/response-interceptor.interface';
 
 @NgModule({
   exports: [],
-  imports: [HttpModule],
+  imports: [HttpClientModule],
   providers: [CoolHttp]
 })
 export class CoolHttpModule {

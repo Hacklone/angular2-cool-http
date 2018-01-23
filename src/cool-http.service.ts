@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, Response, RequestOptions } from '@angular/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Rx';
 
 import { HttpHeader } from './http-header.model';
@@ -7,6 +7,7 @@ import { CookieStore } from './cookie-store.service';
 import { IRequestInterceptor } from './request-interceptor.interface';
 import { IResponseInterceptor } from './response-interceptor.interface';
 import { HttpError } from './http-error.model';
+import { DEFAULT_REQUEST_OPTIONS, RequestOptions } from './request-options.interface';
 
 export interface Func<T, T1, T2, TResult> {
   (item: T, item1: T1, item2: T2): TResult;
@@ -14,8 +15,6 @@ export interface Func<T, T1, T2, TResult> {
 
 @Injectable()
 export class CoolHttp {
-  private _http: Http;
-
   private _cookieStore: CookieStore = new CookieStore();
 
   private _globalHeaders: HttpHeader[] = [];
@@ -25,8 +24,7 @@ export class CoolHttp {
   private _baseUrl;
   private _withCredentials;
 
-  constructor(http: Http) {
-    this._http = http;
+  constructor(private _http: HttpClient) {
   }
 
   public get baseUrl(): string {
@@ -110,66 +108,68 @@ export class CoolHttp {
     });
   }
 
-  public async getAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
+  public async getAsync<T = any>(url: string, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Promise<T> {
     let that = this;
 
-    return await that._requestCoreAsync(url, 'GET', null, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync<T>(url, 'GET', null, options, (url, data, modOptions) => {
       return that._http.get(url, modOptions);
     });
   }
 
-  public async postAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
+  public async postAsync<T = any>(url: string, data?: any, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Promise<T> {
     let that = this;
 
-    return await that._requestCoreAsync(url, 'POST', data, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync<T>(url, 'POST', data, options, (url, data, modOptions) => {
       return that._http.post(url, data, modOptions);
     });
   }
 
-  public async putAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
+  public async putAsync<T = any>(url: string, data?: any, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Promise<T> {
     let that = this;
 
-    return await that._requestCoreAsync(url, 'PUT', data, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync<T>(url, 'PUT', data, options, (url, data, modOptions) => {
       return that._http.put(url, data, modOptions);
     });
   }
 
-  public async deleteAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
+  public async deleteAsync<T = any>(url: string, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Promise<T> {
     let that = this;
 
-    return await that._requestCoreAsync(url, 'DELETE', null, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync<T>(url, 'DELETE', null, options, (url, data, modOptions) => {
       return that._http['delete'](url, modOptions);
     });
   }
 
-  public async patchAsync(url: string, data?: any, options: RequestOptions = new RequestOptions()): Promise<any> {
+  public async patchAsync<T = any>(url: string, data?: any, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Promise<T> {
     let that = this;
 
-    return await that._requestCoreAsync(url, 'PATCH', data, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync<T>(url, 'PATCH', data, options, (url, data, modOptions) => {
       return that._http.patch(url, data, modOptions);
     });
   }
 
-  public async headAsync(url: string, options: RequestOptions = new RequestOptions()): Promise<any> {
+  public async headAsync<T = any>(url: string, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Promise<T> {
     let that = this;
 
-    return await that._requestCoreAsync(url, 'HEAD', null, options, (url, data, modOptions) => {
+    return await that._requestCoreAsync<T>(url, 'HEAD', null, options, (url, data, modOptions) => {
       return that._http.head(url, modOptions);
     });
   }
 
-  private async _requestCoreAsync(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Promise<any> {
-    options.headers = options.headers || new Headers();
+  private async _requestCoreAsync<T = any>(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<HttpResponse<Object>>>): Promise<T> {
+    options.headers = options.headers || new HttpHeaders();
+    options.observe = 'response';
+    options.responseType = 'json';
 
     url = this._convertUrl(url);
 
-    this._appendGlobalHeaders(options.headers);
+    this._appendGlobalHeaders(<HttpHeaders> options.headers);
 
-    this._tryAppendRegisteredCookiestoCustomHeaders(options.headers);
+    this._tryAppendRegisteredCookiesToCustomHeaders(<HttpHeaders> options.headers);
 
     this._modifyOptions(options);
 
-    let clientHeaders = this._convertAngularHeadersToHttpClientHeaders(options.headers);
+    let clientHeaders = this._convertAngularHeadersToHttpClientHeaders(<HttpHeaders> options.headers);
 
     let shouldIntercept = await this._invokeRequestInterceptorsAsync(url, method, data, clientHeaders);
 
@@ -177,9 +177,9 @@ export class CoolHttp {
       return;
     }
 
-    this._updateAngularHeadersFromHttpClientHeaders(clientHeaders, options.headers);
+    this._updateAngularHeadersFromHttpClientHeaders(clientHeaders, <HttpHeaders> options.headers);
 
-    let response: Response;
+    let response: HttpResponse<Object>;
 
     try {
       response = await action(url, data, options).toPromise();
@@ -195,70 +195,61 @@ export class CoolHttp {
     }
 
     if (!response.ok) {
-      throw new HttpError(method, url, response.status, response.statusText, response.text());
+      throw new HttpError(method, url, response.status, response.statusText, JSON.stringify(response.body));
     }
 
-    let returnValue;
-
-    try {
-      returnValue = response.json();
-    }
-    catch (e) {
-      returnValue = response.text();
-    }
-
-    return returnValue;
+    return <T> response.body;
   }
 
-  public getObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
+  public getObservable<T = any>(url: string, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Observable<T> {
     let that = this;
 
-    return that._requestCoreObservable(url, 'GET', null, options, (url, data, modOptions) => {
+    return that._requestCoreObservable<T>(url, 'GET', null, options, (url, data, modOptions) => {
       return that._http.get(url, modOptions);
     });
   }
 
-  public postObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
+  public postObservable<T = any>(url: string, data: any, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Observable<T> {
     let that = this;
 
-    return that._requestCoreObservable(url, 'POST', data, options, (url, data, modOptions) => {
+    return that._requestCoreObservable<T>(url, 'POST', data, options, (url, data, modOptions) => {
       return that._http.post(url, data, modOptions);
     });
   }
 
-  public putObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
+  public putObservable<T = any>(url: string, data: any, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Observable<T> {
     let that = this;
 
-    return that._requestCoreObservable(url, 'PUT', data, options, (url, data, modOptions) => {
+    return that._requestCoreObservable<T>(url, 'PUT', data, options, (url, data, modOptions) => {
       return that._http.put(url, data, modOptions);
     });
   }
 
-  public deleteObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
+  public deleteObservable<T = any>(url: string, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Observable<T> {
     let that = this;
 
-    return that._requestCoreObservable(url, 'DELETE', null, options, (url, data, modOptions) => {
+    return that._requestCoreObservable<T>(url, 'DELETE', null, options, (url, data, modOptions) => {
       return that._http['delete'](url, modOptions);
     });
   }
 
-  public patchObservable(url: string, data: any, options: RequestOptions = new RequestOptions()): Observable<Response> {
+  public patchObservable<T = any>(url: string, data: any, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Observable<T> {
     let that = this;
 
-    return that._requestCoreObservable(url, 'PATCH', data, options, (url, data, modOptions) => {
+    return that._requestCoreObservable<T>(url, 'PATCH', data, options, (url, data, modOptions) => {
       return that._http.patch(url, data, modOptions);
     });
   }
 
-  public headObservable(url: string, options: RequestOptions = new RequestOptions()): Observable<Response> {
+  public headObservable<T = any>(url: string, options: RequestOptions = DEFAULT_REQUEST_OPTIONS): Observable<T> {
     let that = this;
 
-    return that._requestCoreObservable(url, 'HEAD', null, options, (url, data, modOptions) => {
+    return that._requestCoreObservable<T>(url, 'HEAD', null, options, (url, data, modOptions) => {
       return that._http.head(url, modOptions);
     });
   }
 
-  private _requestCoreObservable(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<Response>>): Observable<Response> {
+  private _requestCoreObservable<T = any>(url: string, method: string, data: any, options: RequestOptions, action: Func<string, any, RequestOptions, Observable<HttpResponse<Object>>>): Observable<T> {
     return Observable.fromPromise(this._requestCoreAsync(url, method, data, options, action));
   }
 
@@ -278,13 +269,13 @@ export class CoolHttp {
     }
   }
 
-  private _appendGlobalHeaders(headers: Headers): void {
+  private _appendGlobalHeaders(headers: HttpHeaders): void {
     for (const registeredHeader of this._globalHeaders) {
       headers.append(registeredHeader.key, registeredHeader.value);
     }
   }
 
-  private _tryAppendRegisteredCookiestoCustomHeaders(headers: Headers): void {
+  private _tryAppendRegisteredCookiesToCustomHeaders(headers: HttpHeaders): void {
     for (const cookieToHeader of this._customCookieToHeaders) {
       const cookieValue = this._cookieStore.getCookie(cookieToHeader.cookieName);
 
@@ -306,7 +297,7 @@ export class CoolHttp {
     return false;
   }
 
-  private async _invokeResponseInterceptorsAsync(response: Response, url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
+  private async _invokeResponseInterceptorsAsync(response: HttpResponse<Object>, url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
     for (const responseInterceptor of this._responseInterceptors) {
       const shouldIntercept = await responseInterceptor.afterResponseAsync(response, url, method, data, headers);
 
@@ -318,7 +309,7 @@ export class CoolHttp {
     return false;
   }
 
-  private _convertAngularHeadersToHttpClientHeaders(headers: Headers): HttpHeader[] {
+  private _convertAngularHeadersToHttpClientHeaders(headers: HttpHeaders): HttpHeader[] {
     return headers.keys().map(headerKey => {
       const httpClientHeader = new HttpHeader();
 
@@ -329,7 +320,7 @@ export class CoolHttp {
     });
   }
 
-  private _updateAngularHeadersFromHttpClientHeaders(httpClientHeaders: HttpHeader[], headers: Headers): void {
+  private _updateAngularHeadersFromHttpClientHeaders(httpClientHeaders: HttpHeader[], headers: HttpHeaders): void {
     for (const clientHeader of httpClientHeaders) {
       const headerValue = headers.get(clientHeader.key);
 
