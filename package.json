@@ -1,6 +1,6 @@
 {
   "name": "angular2-cool-http",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Cool features over angular Http Client.",
   "main": "index.js",
   "jsnext:main": "esm/index.js",
@@ -52,10 +52,5 @@
   "bugs": {
     "url": "https://github.com/Hacklone/angular2-cool-http/issues"
   },
-  "homepage": "https://github.com/Hacklone/angular2-cool-http#readme",
-  "dependencies": {
-    "@angular/common": "^5.2.1",
-    "@angular/core": "^5.2.1",
-    "rxjs": "^5.5.6"
-  }
+  "homepage": "https://github.com/Hacklone/angular2-cool-http#readme"
 }
