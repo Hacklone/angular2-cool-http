@@ -163,9 +163,9 @@ export class CoolHttp {
 
     url = this._convertUrl(url);
 
-    this._appendGlobalHeaders(<HttpHeaders> options.headers);
+    options.headers = this._appendGlobalHeaders(<HttpHeaders> options.headers);
 
-    this._tryAppendRegisteredCookiesToCustomHeaders(<HttpHeaders> options.headers);
+    options.headers = this._tryAppendRegisteredCookiesToCustomHeaders(<HttpHeaders> options.headers);
 
     this._modifyOptions(options);
 
@@ -177,7 +177,7 @@ export class CoolHttp {
       return;
     }
 
-    this._updateAngularHeadersFromHttpClientHeaders(clientHeaders, <HttpHeaders> options.headers);
+    options.headers = this._updateAngularHeadersFromHttpClientHeaders(clientHeaders, <HttpHeaders> options.headers);
 
     let response: HttpResponse<string>;
 
@@ -278,20 +278,28 @@ export class CoolHttp {
     }
   }
 
-  private _appendGlobalHeaders(headers: HttpHeaders): void {
+  private _appendGlobalHeaders(headers: HttpHeaders): HttpHeaders {
+    let newHeaders = headers;
+
     for (const registeredHeader of this._globalHeaders) {
-      headers.append(registeredHeader.key, registeredHeader.value);
+      newHeaders = headers.set(registeredHeader.key, registeredHeader.value);
     }
+
+    return newHeaders;
   }
 
-  private _tryAppendRegisteredCookiesToCustomHeaders(headers: HttpHeaders): void {
+  private _tryAppendRegisteredCookiesToCustomHeaders(headers: HttpHeaders): HttpHeaders {
+    let newHeaders = headers;
+
     for (const cookieToHeader of this._customCookieToHeaders) {
       const cookieValue = this._cookieStore.getCookie(cookieToHeader.cookieName);
 
       if (cookieValue) {
-        headers.append(cookieToHeader.customHeaderName, cookieValue);
+        newHeaders = headers.set(cookieToHeader.customHeaderName, cookieValue);
       }
     }
+
+    return newHeaders;
   }
 
   private async _invokeRequestInterceptorsAsync(url: string, method: string, data: any, headers: HttpHeader[]): Promise<boolean> {
@@ -329,13 +337,17 @@ export class CoolHttp {
     });
   }
 
-  private _updateAngularHeadersFromHttpClientHeaders(httpClientHeaders: HttpHeader[], headers: HttpHeaders): void {
+  private _updateAngularHeadersFromHttpClientHeaders(httpClientHeaders: HttpHeader[], headers: HttpHeaders): HttpHeaders {
+    let newHeaders = headers;
+
     for (const clientHeader of httpClientHeaders) {
       const headerValue = headers.get(clientHeader.key);
 
       if (headerValue !== clientHeader.value) {
-        headers.set(clientHeader.key, clientHeader.value);
+        newHeaders = headers.set(clientHeader.key, clientHeader.value);
       }
     }
+
+    return newHeaders;
   }
 }
