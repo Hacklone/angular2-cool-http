@@ -1,6 +1,6 @@
 {
   "name": "angular2-cool-http",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "Cool features over angular Http Client.",
   "main": "index.js",
   "jsnext:main": "esm/index.js",
