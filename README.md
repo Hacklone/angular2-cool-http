@@ -4,7 +4,7 @@
 [total-downloads-image]: https://img.shields.io/npm/dt/angular2-cool-http.svg
 
 # !!!!!!
-# This version of angular2-cool-storage is deprecated and only left here for reference.
+# This version of angular2-cool-http is deprecated and only left here for reference.
 # Please use [@angular-cool/http](https://www.npmjs.com/package/@angular-cool/http) instead!
 # !!!!!!
 
